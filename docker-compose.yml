@@ -1,0 +1,70 @@
+version: '3.7'
+services:
+  db_server:
+    build: ./DB-Server
+    # ports:
+    #   - 3001:3001
+    volumes:
+      - ./logs/DB-Server:/code/logs
+    environment: 
+      - MONGO_URL=mongodb://mongodb:27017
+    depends_on:
+      - mongodb
+    # links: 
+    #   - mongodb
+    networks: 
+      - local
+  ml_server:
+    build: ./ML-Server
+    # ports:
+    #   - 3002:3002
+    environment: 
+      - DB_SERVER_API_BASE=http://db_server:3001
+    depends_on:
+      - mongodb
+    links: 
+      - db_server
+    networks: 
+      - local
+  live_trading_manager:
+    build: ./live-trading-manager
+    # ports:
+    #   - 3004:3004
+    volumes:
+      - ./logs/live-trading-manager:/code/logs
+    environment: 
+      - MONGO_URL=mongodb://mongodb:27017
+      - ML_SERVER_BASE_API=http://ml_server:3002
+    depends_on:
+      - mongodb
+    # links: 
+    #   - mongodb
+    networks: 
+      - local
+  gekko:
+    build: ./gekko
+    # ports:
+    #   - 3003:3003
+    environment: 
+      - LIVE_TRADE_MANAGER_BASE_API=http://live_trading_manager:3004
+    volumes:
+      - ./logs/gekko:/usr/src/app/logs
+    depends_on:
+      - ml_server
+      - live_trading_manager
+    # links: 
+    #   - mongodb
+    networks: 
+      - local
+  mongodb:
+    image: mongo
+    ports: 
+      - 27017:27017
+    volumes: 
+      - mongodata:/data/db 
+    networks: 
+      - local
+volumes:
+  mongodata:
+networks: 
+  local:
