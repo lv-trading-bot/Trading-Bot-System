@@ -1,0 +1,12 @@
+[submodule "live-trading-manager"]
+	path = live-trading-manager
+	url = https://github.com/lv-trading-bot/live-trading-manager.git
+[submodule "ML-For-Trading-Bot"]
+	path = ML-For-Trading-Bot
+	url = https://github.com/lv-trading-bot/ML-For-Trading-Bot.git
+[submodule "Gekko"]
+	path = Gekko
+	url = https://github.com/lv-trading-bot/Gekko.git
+[submodule "DB-Server"]
+	path = DB-Server
+	url = https://github.com/lv-trading-bot/DB-Server.git
