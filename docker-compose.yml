@@ -15,7 +15,7 @@ services:
     networks: 
       - local
   ml_server:
-    build: ./ML-Server
+    build: ./ML-For-Trading-Bot
     # ports:
     #   - 3002:3002
     environment: 
@@ -42,13 +42,13 @@ services:
     networks: 
       - local
   gekko:
-    build: ./gekko
+    build: ./Gekko
     # ports:
     #   - 3003:3003
     environment: 
       - LIVE_TRADE_MANAGER_BASE_API=http://live_trading_manager:3004
     volumes:
-      - ./logs/gekko:/usr/src/app/logs
+      - ./logs/Gekko:/usr/src/app/logs
     depends_on:
       - ml_server
       - live_trading_manager
