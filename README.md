@@ -73,4 +73,4 @@ Example:
 - xóa hết file trong thư mục `logs` và `save_info`
 - sửa file `tin-config-paper-trading.js`
 - chạy lệnh `docker build . -t <some_thing>`
-- chạy lệnh `docker run -e LIVE_TRADE_MANAGER_BASE_API=http://trading_bot_system_live_trading_manager_1:3004 --name <some_thing> -v <Đường dẫn đến thư mục logs>:/usr/src/app/logs --network trading_bot_system_local <some_thing>`
+- chạy lệnh `docker run -e LIVE_TRADE_MANAGER_BASE_API=http://trading-bot-system_live_trading_manager_1:3004 --name <some_thing> -v <Đường dẫn đến thư mục logs>:/usr/src/app/logs --network trading-bot-system_local <some_thing>`
