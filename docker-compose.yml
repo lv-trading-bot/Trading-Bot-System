@@ -67,7 +67,7 @@ services:
     ports:
       - 3005:80
     environment:
-      - REACT_APP_LIVE_TRADING_MANAGER_HOST=http://live_trading_manager:3004
+      - REACT_APP_LIVE_TRADING_MANAGER_HOST=http://35.186.150.9:3004
     networks: 
       - local
 volumes:
