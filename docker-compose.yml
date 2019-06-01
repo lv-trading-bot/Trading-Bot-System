@@ -1,44 +1,38 @@
 version: '3.7'
 services:
+  mongodb:
+    image: mongo
+    ports: 
+      - 27017:27017
+    volumes: 
+      - mongodata:/data/db 
+    networks: 
+      - local
   db_server:
     build: ./DB-Server
-    # ports:
-    #   - 3001:3001
+    ports:
+      - 3001:3001
     volumes:
       - ./logs/DB-Server:/code/logs
     environment: 
       - MONGO_URL=mongodb://mongodb:27017
+      - LIVE_TRADING_MANAGER_BASE_URL=http://live_trading_manager:3004
+      - ID=db_server_123
     depends_on:
       - mongodb
-    # links: 
-    #   - mongodb
+      - live_trading_manager
     networks: 
       - local
   ml_server:
     build: ./ML-For-Trading-Bot
-    # ports:
-    #   - 3002:3002
+    ports:
+      - 3002:3002
     environment: 
       - DB_SERVER_API_BASE=http://db_server:3001
+      - PORT=3002
+      - SOCKET_URL=http://live_trading_manager:3004
     depends_on:
-      - mongodb
-    links: 
-      - db_server
-    networks: 
-      - local
-  live_trading_manager:
-    build: ./live-trading-manager
-    # ports:
-    #   - 3004:3004
-    volumes:
-      - ./logs/live-trading-manager:/code/logs
-    environment: 
-      - MONGO_URL=mongodb://mongodb:27017
-      - ML_SERVER_BASE_API=http://ml_server:3002
-    depends_on:
-      - mongodb
-    # links: 
-    #   - mongodb
+      - live_trading_manager
     networks: 
       - local
   gekko:
@@ -49,19 +43,31 @@ services:
       - LIVE_TRADE_MANAGER_BASE_API=http://live_trading_manager:3004
     volumes:
       - ./logs/Gekko:/usr/src/app/logs
+      - ./save_info/default:/usr/src/app/save_info
     depends_on:
       - ml_server
       - live_trading_manager
-    # links: 
-    #   - mongodb
     networks: 
       - local
-  mongodb:
-    image: mongo
-    ports: 
-      - 27017:27017
-    volumes: 
-      - mongodata:/data/db 
+  live_trading_manager:
+    build: ./live-trading-manager
+    ports:
+      - 3004:3004
+    volumes:
+      - ./logs/live-trading-manager:/code/logs
+    environment: 
+      - MONGO_URL=mongodb://mongodb:27017
+      - ML_SERVER_BASE_API=http://ml_server:3002
+    depends_on:
+      - mongodb
+    networks: 
+      - local
+  ui:
+    build: ./UI
+    ports:
+      - 3005:80
+    environment:
+      - REACT_APP_LIVE_TRADING_MANAGER_HOST=http://live_trading_manager:3004
     networks: 
       - local
 volumes:

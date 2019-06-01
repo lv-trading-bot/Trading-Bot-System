@@ -4,7 +4,8 @@
 - DB-Server: 3001
 - ML-Server: 3002
 - Gekko: 3003
-- Manager: 3004\
+- Manager: 3004
+- UI: 3005
 # Các bước để chạy docker-compose up
 - Chuẩn bị file `config.js` cho `DB-Server`
 Example:

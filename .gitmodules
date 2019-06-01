@@ -10,3 +10,6 @@
 [submodule "DB-Server"]
 	path = DB-Server
 	url = https://github.com/lv-trading-bot/DB-Server.git
+[submodule "UI"]
+	path = UI
+	url = https://github.com/lv-trading-bot/UI.git
