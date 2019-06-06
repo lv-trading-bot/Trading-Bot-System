@@ -58,6 +58,7 @@ services:
     environment: 
       - MONGO_URL=mongodb://mongodb:27017
       - ML_SERVER_BASE_API=http://ml_server:3002
+      - DOCKER_HOST=dockerhost
     depends_on:
       - mongodb
     networks: 
@@ -68,6 +69,12 @@ services:
       - 3005:80
     environment:
       - REACT_APP_LIVE_TRADING_MANAGER_HOST=http://35.186.150.9:3004
+    networks: 
+      - local
+  dockerhost:
+    image: qoomon/docker-host
+    cap_add: [ 'NET_ADMIN', 'NET_RAW' ]
+    restart: on-failure
     networks: 
       - local
 volumes:
