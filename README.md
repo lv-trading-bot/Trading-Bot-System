@@ -6,6 +6,33 @@
 - Gekko: 3003
 - Manager: 3004
 - UI: 3005
+- Gekko Igniter: 3006 (dockerhost)
+# Các bước để chạy toàn bộ hệ thống
+- Build Gekko với tên image, ví dụ ở đây dùng tên `gekko_image`
+    - `docker build -t gekko_image .`
+- Thiết lập file config và chạy docker-compose, ở dưới đã hướng dẫn
+- Chạy GekkoIgniter
+    - Yêu cầu có `node` và `docker`
+    - Tạo file `config.js`, 
+    Example:
+    ```
+    var config = {};
+
+    config.debug = true;
+    config.silent = false;
+
+    config.production = true;
+    config.loggerAdapter = 'file';
+
+    config.gekkoImageName = "test_gekko_config";
+    config.networkName = "trading_bot_system_local"
+
+    config.nameConfigInGekko = "config_by_gekko_igniter";
+
+    module.exports = config;
+
+    ```
+    - set biến môi trường `PORT=3006`, `LIVE_TRADE_MANAGER_BASE_API=http://live_trading_manager:3004`
 # Các bước để chạy docker-compose up
 - Chuẩn bị file `config.js` cho `DB-Server`
 Example:
@@ -69,9 +96,3 @@ Example:
     ```
 - Sửa file `config.py` trong thư mục `ML-For-Trading-Bot` nếu như có cấu hình khác.
 - `docker-compose up -d`
-# Các bước để thêm 1 gekko mới
-- clone source gekko sang thư mục khác
-- xóa hết file trong thư mục `logs` và `save_info`
-- sửa file `tin-config-paper-trading.js`
-- chạy lệnh `docker build . -t <some_thing>`
-- chạy lệnh `docker run -d -e LIVE_TRADE_MANAGER_BASE_API=http://trading-bot-system_live_trading_manager_1:3004 --name <some_thing> -v <Đường dẫn đến thư mục logs>:/usr/src/app/logs --network trading-bot-system_local <some_thing>`

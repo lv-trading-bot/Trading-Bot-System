@@ -35,20 +35,20 @@ services:
       - live_trading_manager
     networks: 
       - local
-  gekko:
-    build: ./Gekko
-    # ports:
-    #   - 3003:3003
-    environment: 
-      - LIVE_TRADE_MANAGER_BASE_API=http://live_trading_manager:3004
-    volumes:
-      - ./logs/Gekko:/usr/src/app/logs
-      - ./save_info/default:/usr/src/app/save_info
-    depends_on:
-      - ml_server
-      - live_trading_manager
-    networks: 
-      - local
+  # gekko:
+  #   build: ./Gekko
+  #   # ports:
+  #   #   - 3003:3003
+  #   environment: 
+  #     - LIVE_TRADE_MANAGER_BASE_API=http://live_trading_manager:3004
+  #   volumes:
+  #     - ./logs/Gekko:/usr/src/app/logs
+  #     - ./save_info/default:/usr/src/app/save_info
+  #   depends_on:
+  #     - ml_server
+  #     - live_trading_manager
+  #   networks: 
+  #     - local
   live_trading_manager:
     build: ./live-trading-manager
     ports:

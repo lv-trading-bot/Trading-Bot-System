@@ -13,3 +13,6 @@
 [submodule "UI"]
 	path = UI
 	url = https://github.com/lv-trading-bot/UI.git
+[submodule "GekkoIgniter"]
+	path = GekkoIgniter
+	url = https://github.com/lv-trading-bot/GekkoIgniter.git
