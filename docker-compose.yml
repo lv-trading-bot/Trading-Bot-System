@@ -8,6 +8,7 @@ services:
       - mongodata:/data/db 
     networks: 
       - local
+    restart: unless-stopped
   db_server:
     build: ./DB-Server
     ports:
@@ -23,6 +24,7 @@ services:
       - live_trading_manager
     networks: 
       - local
+    restart: unless-stopped
   ml_server:
     build: ./ML-For-Trading-Bot
     ports:
@@ -31,10 +33,12 @@ services:
       - DB_SERVER_API_BASE=http://db_server:3001
       - PORT=3002
       - SOCKET_URL=http://live_trading_manager:3004
+      - ID=ML_Server_1
     depends_on:
       - live_trading_manager
     networks: 
       - local
+    restart: unless-stopped
   # gekko:
   #   build: ./Gekko
   #   # ports:
@@ -63,6 +67,7 @@ services:
       - mongodb
     networks: 
       - local
+    restart: unless-stopped
   ui:
     build: ./UI
     ports:
@@ -71,6 +76,7 @@ services:
       - REACT_APP_LIVE_TRADING_MANAGER_HOST=http://35.186.150.9:3004
     networks: 
       - local
+    restart: unless-stopped
   dockerhost:
     image: qoomon/docker-host
     cap_add: [ 'NET_ADMIN', 'NET_RAW' ]
