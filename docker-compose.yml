@@ -9,6 +9,9 @@ services:
     networks: 
       - local
     restart: unless-stopped
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=${MONGO_INITDB_ROOT_USERNAME}
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGO_INITDB_ROOT_PASSWORD} 
   db_server:
     build: ./DB-Server
     ports:
@@ -16,9 +19,10 @@ services:
     volumes:
       - ./logs/DB-Server:/code/logs
     environment: 
-      - MONGO_URL=mongodb://mongodb:27017
+      - MONGO_URL=mongodb://${MONGO_INITDB_ROOT_USERNAME}:${MONGO_INITDB_ROOT_PASSWORD}@mongodb:27017
       - LIVE_TRADING_MANAGER_BASE_URL=http://live_trading_manager:3004
       - ID=db_server_123
+      - AUTHENTICATION_TOKEN=${AUTHENTICATION_TOKEN}
     depends_on:
       - mongodb
       - live_trading_manager
@@ -34,6 +38,7 @@ services:
       - PORT=3002
       - SOCKET_URL=http://live_trading_manager:3004
       - ID=ML_Server_1
+      - AUTHENTICATION_TOKEN=${AUTHENTICATION_TOKEN}
     depends_on:
       - live_trading_manager
     networks: 
@@ -60,9 +65,10 @@ services:
     volumes:
       - ./logs/live-trading-manager:/code/logs
     environment: 
-      - MONGO_URL=mongodb://mongodb:27017
+      - MONGO_URL=mongodb://${MONGO_INITDB_ROOT_USERNAME}:${MONGO_INITDB_ROOT_PASSWORD}@mongodb:27017
       - ML_SERVER_BASE_API=http://ml_server:3002
       - DOCKER_HOST=dockerhost
+      - AUTHENTICATION_TOKEN=${AUTHENTICATION_TOKEN}
     depends_on:
       - mongodb
     networks: 

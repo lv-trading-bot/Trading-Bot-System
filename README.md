@@ -95,4 +95,10 @@ Example:
     module.exports = config;
     ```
 - Sửa file `config.py` trong thư mục `ML-For-Trading-Bot` nếu như có cấu hình khác.
+- Set biến môi trường `AUTHENTICATION_TOKEN`
+- Set biến môi trường `MONGO_INITDB_ROOT_USERNAME` và `MONGO_INITDB_ROOT_PASSWORD`, đây là root user của mongodb
 - `docker-compose up -d`
+
+## Lưu ý:
+- Lúc dừng toàn bộ hệ thống thì down từng node, không dùng `docker-compose down` dẫn đến network nội bộ bị xóa làm cho các gekko container không thể kết nối vào hệ thống mới sau khi start lại.
+- User của mongodb chỉ được tạo 1 lần duy nhất lúc tạo volume, những lần sau đều sử dụng lại user ban đầu (lưu ý để truyền vào cho đúng cho live-trading-manager và db-server ở những lần chạy lại)
