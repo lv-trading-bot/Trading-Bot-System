@@ -1,20 +1,20 @@
 # Trading_Bot_System
 
-# PORT
+## Các PORT được quy định trong hệ thống
 - DB-Server: 3001
 - ML-Server: 3002
 - Gekko: 3003
 - Manager: 3004
 - UI: 3005
 - Gekko Igniter: 3006 (dockerhost)
-# Các bước để chạy toàn bộ hệ thống
-- Build Gekko với tên image, ví dụ ở đây dùng tên `gekko_image`
+## Các bước để chạy toàn bộ hệ thống
+- Thiết lập file config và chạy docker-compose, xem phần `Các bước để chạy docker-compose up`.
+- Build Gekko với tên image, ví dụ ở đây dùng tên `gekko_image`.
     - `docker build -t gekko_image .`
-- Thiết lập file config và chạy docker-compose, ở dưới đã hướng dẫn
 - Chạy GekkoIgniter
-    - Yêu cầu có `node` và `docker`
-    - Tạo file `config.js`, 
-    Example:
+    - Yêu cầu môi trường đã cài đặt có `node` và `docker`.
+    - Tạo file `/GekkoIgniter/config.js`, nếu như đặt tên khác cho Gekko Image thì cần phải sửa lại trong `gekkoImageName`.
+    Ví dụ:
     ```
     var config = {};
 
@@ -24,23 +24,36 @@
     config.production = true;
     config.loggerAdapter = 'file';
 
-    config.gekkoImageName = "test_gekko_config";
+    // Tên của gekko image đã được build
+    config.gekkoImageName = "gekko_image";
+
+    // Tên của network hệ thống sử dụng trong Docker
     config.networkName = "trading_bot_system_local"
 
+    // Tên file config sẽ được đặt bên trong Gekko
     config.nameConfigInGekko = "config_by_gekko_igniter";
 
     module.exports = config;
 
     ```
-    - set biến môi trường `PORT=3006`, `LIVE_TRADE_MANAGER_BASE_API=http://live_trading_manager:3004`
-# Các bước để chạy docker-compose up
-- Chuẩn bị file `config.js` cho `DB-Server`
-Example:
+    - Set các biến môi trường sau trước khi chạy:
+        - PORT=3006
+        - LIVE_TRADE_MANAGER_BASE_API (trong container): nếu không thay đổi gì thì là `http://live_trading_manager:3004`
+        - ML_BASE_API (trong container): nếu không thay đổi gì thì là `http://ml_server:3002`
+        - AUTHENTICATION_TOKEN: Token dùng chung cho tất cả các thành phần trong hệ thống.
+        - MONGO_INITDB_ROOT_USERNAME: Username của root user sẽ được tạo với mongodb
+        - MONGO_INITDB_ROOT_PASSWORD: Password của root user sẽ được tạo với mongodb
+    - Chạy lệnh `npm start`
+## Các bước để chạy docker-compose up
+- Chuẩn bị file `/DB-Server/config.js` cho `DB-Server`
+Ví dụ:
     ```
     var config = {};
 
+    // Mốc thời gian bắt đầu sync dữ liệu lịch sử
     config.beginAt = "2018-02-01 00:00:00";
 
+    // Các cặp cần sync dữ liệu
     config.pairs = [
         {
             exchange: "binance",
@@ -49,10 +62,11 @@ Example:
         }
     ]
 
+    // Hệ quản trị cơ sở dữ liệu, hệ thống hiện tại chỉ hỗ trợ mongodb
     config.adapterDatabase = "mongo";
     config.mongo = {
         connectionString: process.env.MONGO_URL,
-        dbName:  "db_candles_of_cryptocurrency_docker"
+        dbName:  "db_candles_of_cryptocurrency"
     }
 
     config.debug = true;
@@ -63,41 +77,54 @@ Example:
 
     module.exports = config;
     ```
-- Sửa file `tin-config-paper-trading.js` trong thư mục Gekko để cấu hình cặp chuẩn bị chạy
-- Chuẩn bị file `config.js` cho `live-trading-manager`
-Example:
+- Chuẩn bị file `/live-trading-manager/config.js` cho `live-trading-manager`
+Ví dụ:
     ```
     let config = {};
 
     config.mongodb = {
-        connectionString: process.env.MONGO_URL || "mongodb://localhost:27017",
+        connectionString: process.env.MONGO_URL,
         dbName:  "db_live_trading_manager"
     }
 
-    config.pairs = {
-        listPairs: [
-            {
-                asset: "BTC",
-                currency: "USDT",
-                candleSize: 60
-            }
-        ]
-    }
-
     config.machine_learning_api = {
-        base: process.env.ML_SERVER_BASE_API || "http://localhost:3002",
+        base: process.env.ML_SERVER_BASE_API,
         live: "/live"
     }
 
-    config.production = true;
+    config.gekko_igniter_api = {
+        base: `http://${process.env.DOCKER_HOST}:3006`,
+        runGekko: '/run-gekko',
+        stopGekko: '/stop-gekko',
+        startGekko: '/start-gekko',
+        backtest: '/backtest'
+    }
+
     config.loggerAdapter = 'file';
 
     module.exports = config;
     ```
-- Sửa file `config.py` trong thư mục `ML-For-Trading-Bot` nếu như có cấu hình khác.
-- Set biến môi trường `AUTHENTICATION_TOKEN`
-- Set biến môi trường `MONGO_INITDB_ROOT_USERNAME` và `MONGO_INITDB_ROOT_PASSWORD`, đây là root user của mongodb
-- `docker-compose up -d`
+- Chuẩn bị file `/live-trading-manager/authentication/info.js` cho `live-trading-manager`
+Ví dụ:
+    ```
+    module.exports = {
+        users: [
+            {
+                username: "guest",
+                password: "67583412239"
+            }
+        ],
+        secret_key: "this_is_a_secret_key",
+        // Thời gian mà token sẽ hết hạn sau khi được sinh ra
+        live_time_of_token: 1000 * 60 * 60 * 24 //1 ngày
+    }
+    ```
+- Sửa file `/ML-For-Trading-Bot/config.py` nếu như có thay đổi cấu hình với `ML-For-Trading-Bot`.
+- Set các biến môi trường:
+    - AUTHENTICATION_TOKEN: Token dùng chung cho tất cả các thành phần trong hệ thống.
+    - MONGO_INITDB_ROOT_USERNAME: Username của root user sẽ được tạo với mongodb
+    - MONGO_INITDB_ROOT_PASSWORD: Password của root user sẽ được tạo với mongodb
+- Chạy lệnh `docker-compose up -d`
 
 ## Lưu ý:
 - Lúc dừng toàn bộ hệ thống thì down từng node, không dùng `docker-compose down` dẫn đến network nội bộ bị xóa làm cho các gekko container không thể kết nối vào hệ thống mới sau khi start lại.
