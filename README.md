@@ -43,7 +43,8 @@
         - AUTHENTICATION_TOKEN: Token dùng chung cho tất cả các thành phần trong hệ thống.
         - MONGO_INITDB_ROOT_USERNAME: Username của root user sẽ được tạo với mongodb
         - MONGO_INITDB_ROOT_PASSWORD: Password của root user sẽ được tạo với mongodb
-    - Chạy lệnh `npm start`
+    - Chạy lệnh `npm install`
+    - Chạy tiếp lệnh `npm start`
 ## Các bước để chạy docker-compose up
 - Chuẩn bị file `/DB-Server/config.js` cho `DB-Server`
 Ví dụ:
