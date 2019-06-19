@@ -108,6 +108,7 @@ Ví dụ:
 Ví dụ:
     ```
     module.exports = {
+        // Danh sách User
         users: [
             {
                 username: "guest",
@@ -120,11 +121,19 @@ Ví dụ:
     }
     ```
 - Sửa file `/ML-For-Trading-Bot/config.py` nếu như có thay đổi cấu hình với `ML-For-Trading-Bot`.
+- Chuẩn bị file `/UI/.ENV` cho `UI`, trong đó `REACT_APP_LIVE_TRADING_MANAGER_HOST` là địa chỉ của host.
+Ví dụ:
+    ```
+    PORT=3005
+    CHOKIDAR_USEPOLLING=true
+    REACT_APP_LIVE_TRADING_MANAGER_HOST=http://10.10.154.49:3004
+    ```
 - Set các biến môi trường:
     - AUTHENTICATION_TOKEN: Token dùng chung cho tất cả các thành phần trong hệ thống.
     - MONGO_INITDB_ROOT_USERNAME: Username của root user sẽ được tạo với mongodb
     - MONGO_INITDB_ROOT_PASSWORD: Password của root user sẽ được tạo với mongodb
 - Chạy lệnh `docker-compose up -d`
+- Truy cập `localhost:3005` để xem kết quả.
 
 ## Lưu ý:
 - Lúc dừng toàn bộ hệ thống thì down từng node, không dùng `docker-compose down` dẫn đến network nội bộ bị xóa làm cho các gekko container không thể kết nối vào hệ thống mới sau khi start lại.
