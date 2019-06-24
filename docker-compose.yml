@@ -33,6 +33,8 @@ services:
     build: ./ML-For-Trading-Bot
     ports:
       - 3002:3002
+    volumes:
+      - ./logs/ML-For-Trading-Bot:/code/flaskr/logs
     environment: 
       - DB_SERVER_API_BASE=http://db_server:3001
       - PORT=3002
